@@ -1,8 +1,8 @@
 # frozen_string_literal: true
-require 'zeitwerk'
+#
+require "zeitwerk"
 
 module RedisLocker
-  class Error < StandardError; end
   class << self
     def configuration
       @configuration ||= Configuration.new
