@@ -20,6 +20,16 @@ RSpec.describe RedisLocker do
           expect(RedisLocker.configuration.redis_connection).to eq(redis)
         end
       end
+      context "invalid redis connection passed" do
+        it "rasies an exception" do
+          allow(redis).to receive(:is_a?).with(Redis).and_return(false)
+          expect{
+            RedisLocker.configure do |config|
+              config.redis_connection = redis
+            end
+          }.to raise_error(RedisLocker::Errors::NotValidRedisConnection)
+        end
+      end
     end
   end
 end
