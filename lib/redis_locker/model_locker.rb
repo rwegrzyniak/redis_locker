@@ -4,9 +4,9 @@ module RedisLocker
 
 
     def initialize(model_instance)
-      raise Error::NotModel unless model_instance.respond_to?(:id)
+      raise Errors::NotModel unless model_instance.respond_to?(:id)
 
-      @model_string = "#{model_instance.klass}:#{model_instance.id}"
+      @model_string = "#{model_instance.class}:#{model_instance.id}"
     end
 
     def lock
@@ -17,7 +17,7 @@ module RedisLocker
     end
 
     def lock!
-      raise Error::AlreadyLocked if locked?
+      raise Errors::AlreadyLocked if locked?
 
       redis.hset(@model_string)
       true
