@@ -1,8 +1,6 @@
 # frozen_string_literal: true
+require 'zeitwerk'
 
-require_relative "redis_locker/version"
-require_relative "redis_locker/configuration"
-require 'redis'
 module RedisLocker
   class Error < StandardError; end
   class << self
@@ -15,3 +13,7 @@ module RedisLocker
     end
   end
 end
+
+loader = Zeitwerk::Loader.for_gem
+loader.setup
+loader.eager_load
