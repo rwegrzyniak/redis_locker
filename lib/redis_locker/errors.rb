@@ -5,7 +5,7 @@ module RedisLocker
 
     class NotModel < Error
       def message
-        "Model doesn't have id field"
+        "Model doesn't have id method"
       end
     end
 
