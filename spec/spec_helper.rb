@@ -2,6 +2,19 @@
 
 require "redis_locker"
 require "redis"
+require "mock_redis"
+
+MockRedis.class_eval do
+  def is_a?(klass)
+    return true if klass.to_s == 'Redis'
+    super
+  end
+end
+def configure_with_redis_mock
+  RedisLocker.configure do |config|
+    config.redis_connection = MockRedis.new
+  end
+end
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
