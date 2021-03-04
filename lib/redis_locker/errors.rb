@@ -13,6 +13,12 @@ module RedisLocker
 
     class ModelLocked < Error; end
 
-    class NotValidRedisConnection < StandardError; end
+    class NotValidRedisConnection < Error; end
+
+    class UnknownStrategy < Error; end
+
+    class Locked < Error; end
+
+    class MaxRetryCountAchieved < Error; end
   end
 end
