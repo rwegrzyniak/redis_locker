@@ -4,6 +4,8 @@ require "redis_locker"
 require "redis"
 require "mock_redis"
 
+Dir[File.join(__dir__, 'support', '*.rb')].each { |file| require file; puts "loded #{file}" }
+
 MockRedis.class_eval do
   def is_a?(klass)
     return true if klass.to_s == 'Redis'
