@@ -1,31 +1,40 @@
 module RedisLocker
-  class ModelLocker
+  class ModelLocker < RedisLocker::Locker
     include RedisConnection
+
+    attr_reader :key_string
 
 
     def initialize(model_instance)
       raise Errors::NotModel unless model_instance.respond_to?(:id)
 
-      @model_string = "#{model_instance.class}:#{model_instance.id}"
+      @key_string = "#{model_instance.class}:#{model_instance.id}"
+      super
     end
 
     def lock
       return false if locked?
 
-      redis.hset(@model_string)
-      true
+      redis.sadd(@key_string, @instance_hash)
     end
 
     def lock!
       raise Errors::AlreadyLocked if locked?
 
-      redis.hset(@model_string)
-      true
+      lock
     end
 
     def locked?
-      redis.key?(@model_string)
+      redis.scard(@key_string) > 1 # it has to have NULL_SET_VALUE, otherwise redis will free key
     end
+
+    def unlock
+      return true unless locked?
+
+      redis.srem(@key_string, @instance_hash)
+    end
+
+    private
 
   end
 end
