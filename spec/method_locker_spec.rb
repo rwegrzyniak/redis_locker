@@ -26,7 +26,7 @@ RSpec.describe RedisLocker::MethodLocker do
         expect(subject.lock).to be true
       end
     end
-    context "object locked second time" do
+    context "method locked second time" do
       it "returns false" do
         subject.lock
         expect(subject.lock).to be false
@@ -34,12 +34,12 @@ RSpec.describe RedisLocker::MethodLocker do
     end
   end
   describe "#locked?" do
-    context "object isnt locked" do
+    context "method isnt locked" do
       it "return false" do
         expect(subject.locked?).to be false
       end
     end
-    context "object locked" do
+    context "method locked" do
       before do
         subject.lock
       end
@@ -47,7 +47,7 @@ RSpec.describe RedisLocker::MethodLocker do
         expect(subject.locked?).to be true
       end
     end
-    context "object locked by another instance" do
+    context "method locked by another instance" do
       before do
         another_instance = described_class.new(model_locker, :method)
         another_instance.lock
@@ -59,28 +59,28 @@ RSpec.describe RedisLocker::MethodLocker do
 
   end
   describe "#unlock" do
-    context "object isnt locked" do
+    context "method isnt locked" do
       it "returns true" do
         expect(subject.unlock).to be true
       end
-      it "keeps object unlocked" do
+      it "keeps method unlocked" do
         subject.unlock
         expect(subject.locked?).to be false
       end
     end
-    context "object locked" do
+    context "method locked" do
       before do
         subject.lock
       end
       it "returns true" do
         expect(subject.unlock).to be true
       end
-      it "unlocks object" do
+      it "unlocks method" do
         subject.unlock
         expect(subject.locked?).to be false
       end
     end
-    context "object locked by another_instance" do
+    context "method locked by another_instance" do
       before do
         another_instance = described_class.new(model_locker, :method)
         another_instance.lock
@@ -88,7 +88,7 @@ RSpec.describe RedisLocker::MethodLocker do
       it "returns false" do
         expect(subject.unlock).to be false
       end
-      it "doesn't unlocks object" do
+      it "doesn't unlocks method" do
         subject.unlock
         expect(subject.locked?).to be true
       end

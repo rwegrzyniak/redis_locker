@@ -18,7 +18,7 @@ module RedisLocker
     def lock!
       raise Errors::AlreadyLocked if locked?
 
-      @model_locker.lock!
+      @model_locker.lock
       lock
     end
 
@@ -31,6 +31,5 @@ module RedisLocker
 
       (redis.srem(@key_string, @instance_hash) && @model_locker.unlock)
     end
-
   end
 end
