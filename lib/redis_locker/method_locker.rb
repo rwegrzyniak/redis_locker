@@ -4,7 +4,7 @@ module RedisLocker
 
     def initialize(model_locker, method_name)
       @model_locker = model_locker
-      @key_string = "#{model_locker.key_string}:#{method_name}"
+      @key_string = "LOCKER:#{model_locker.key_string}:#{method_name}"
       super
     end
 

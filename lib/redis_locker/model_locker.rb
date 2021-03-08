@@ -8,7 +8,7 @@ module RedisLocker
     def initialize(model_instance)
       raise Errors::NotModel unless model_instance.respond_to?(:id)
 
-      @key_string = "#{model_instance.class}:#{model_instance.id}"
+      @key_string = "LOCKER:#{model_instance.class}:#{model_instance.id}"
       super
     end
 
