@@ -54,6 +54,15 @@ RSpec.shared_context "locker" do |*subject_constructor_arguments|
       end
     end
 
+    describe "exception from block handling" do
+      it "reraise any exception" do
+        expect{ subject.with_redis_lock { raise Exception }}.to raise_error(Exception)
+      end
+      it "unlocks object" do
+        expect{ subject.with_redis_lock { raise Exception }}.to raise_error(Exception)
+        expect(subject.locked?).to be false
+      end
+    end
 
     describe "retry strategy" do
       before do
