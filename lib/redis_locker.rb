@@ -17,6 +17,12 @@ module RedisLocker
     def configure
       yield(configuration)
     end
+
+    def release_locks!
+      configuration.redis_connection.del(configuration.redis_connection.keys("LOCKER:*"))
+    end
+
+
   end
 
   def self.included(base_klass)
@@ -36,19 +42,28 @@ module RedisLocker
   module ClassMethods
     def lock_every_method_call(strategy: DEFAULT_STRATEGY, retry_count: DEFAULT_RETRY_COUNT, retry_interval: DEFAULT_RETRY_INTERVAL,
                                exclude: DEFAULT_EXCLUDED_METHODS)
-      interceptor = const_get("#{self.name}Interceptor")
+      interceptor = const_get("#{name}Interceptor")
       self.define_singleton_method(:method_added) do |method|
         return super(method) if exclude.include? method
 
         interceptor.define_method(method) do |*args, **opts, &block|
           returned_value = nil
-          puts "locking #{method}"
-          method_locker(method).with_redis_lock do
+          method_locker(method).with_redis_lock strategy: strategy, retry_count: retry_count, retry_interval: retry_interval do
             returned_value = super(*args, **opts, &block)
           end
-          puts "unlocked = #{method}"
           returned_value
         end
+      end
+    end
+
+    def lock_method(method, strategy: DEFAULT_STRATEGY, retry_count: DEFAULT_RETRY_COUNT, retry_interval: DEFAULT_RETRY_INTERVAL)
+      interceptor = const_get("#{name}Interceptor")
+      interceptor.define_method(method) do |*args, **opts, &block|
+        returned_value = nil
+        method_locker(method).with_redis_lock strategy: strategy, retry_count: retry_count, retry_interval: retry_interval do
+          returned_value = super(*args, **opts, &block)
+        end
+        returned_value
       end
     end
   end
