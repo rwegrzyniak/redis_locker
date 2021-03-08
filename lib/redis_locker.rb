@@ -72,6 +72,18 @@ module RedisLocker
     def method_locker(method)
       @method_lockers[method] ||= RedisLocker::MethodLocker.new(@model_locker, method)
     end
+
+    def lock
+      @model_locker.lock
+    end
+
+    def lock!
+      @model_locker.lock!
+    end
+
+    def unlock
+      @model_locker.unlock
+    end
   end
 
 

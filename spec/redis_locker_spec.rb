@@ -143,6 +143,48 @@ RSpec.describe RedisLocker do
       t.join
     end
   end
+  describe "low level api" do
+    before do
+      configure_with_redis_mock
+    end
+    class TestedLowLevelClass
+      include RedisLocker
+      attr_reader :model_locker
+      def id
+        10
+      end
+    end
+    let(:test_object) { TestedLowLevelClass.new }
+    describe "#lock" do
+      before do
+        test_object.lock
+      end
+      it "locks object" do
+        expect(test_object.model_locker.locked?).to be true
+      end
+    end
+    describe "#lock!" do
+      before do
+        test_object.lock!
+      end
+      it "locks object" do
+        expect(test_object.model_locker.locked?).to be true
+      end
+    end
+    describe "#locked?" do
+      before do
+        test_object.lock
+      end
+      after do
+        test_object.unlock
+      end
+      it "locks object" do
+        expect(test_object.model_locker.locked?).to be true
+      end
+    end
+
+  end
+
   describe "#lock_method" do
     class TestedSecondClass
       include RedisLocker
