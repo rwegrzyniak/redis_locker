@@ -32,7 +32,12 @@ module RedisLocker
       lock_result = strategy == :exception ? lock! : lock # delegates throwing exception to lock!
       return unless lock_result
 
-      yield if block
+      begin
+        yield if block
+      rescue Exception => e
+        unlock
+        raise e
+      end
       unlock # unlock returns true if everything is ok
     end
 
