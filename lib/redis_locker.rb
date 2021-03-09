@@ -26,9 +26,13 @@ module RedisLocker
   end
 
   def self.included(base_klass)
+    puts 'included'
     base_klass.extend(ClassMethods)
     base_klass.include(InstanceMethods)
-    interceptor = const_set("#{base_klass.name}Interceptor", Module.new)
+    interceptor = base_klass.const_set("#{base_klass.name.split('::').last}Interceptor", Module.new)
+    puts 'definining interceptor'
+    puts interceptor
+    puts 'eeeeee'
     interceptor.class_eval do
       def initialize(*args, **opts, &block)
         @model_locker = RedisLocker::ModelLocker.new(self)
@@ -42,7 +46,7 @@ module RedisLocker
   module ClassMethods
     def lock_every_method_call(strategy: DEFAULT_STRATEGY, retry_count: DEFAULT_RETRY_COUNT, retry_interval: DEFAULT_RETRY_INTERVAL,
                                exclude: DEFAULT_EXCLUDED_METHODS)
-      interceptor = const_get("#{name}Interceptor")
+      interceptor = self.const_get("#{name.split('::').last}Interceptor")
       self.define_singleton_method(:method_added) do |method|
         return super(method) if exclude.include? method
 
