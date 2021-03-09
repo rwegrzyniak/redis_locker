@@ -119,6 +119,8 @@ some_model.with_redis_lock strategy: :exception do
     #sth
 end
 ```
+### releasing all locks
+When you or someone else messed up with locks which are still present in redis you can use `RedisLocker.release_locks!` which removes all locks in redis.
 It will raise exception because `some_model` is locked. But you will be able to call some locked method because there is no lock on any specific method.
 ### Extending RedisLocker
 You can write own locker by inheriting from `RedisLocker::Locker`, you have to implement `lock`, `lock!`, `locked?` and `unlock` methods. `RedisLocker::Locker` provides unique `@instance_hash` to sign locks and `with_redis_lock` method with implemented `:exception`,  `:retry` and `:silently_die` strategies. You aren't forced to use Redis to store locks, if you want to you have to include `RedisLocker::RedisConnection` module which provides `redis` method to access redis connection. Otherwise you have to write own storing logic eg. using DB, own store engine or even files.
@@ -132,7 +134,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/redis_locker. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/[USERNAME]/redis_locker/blob/master/CODE_OF_CONDUCT.md).
+Bug reports and pull requests are welcome on GitHub at https://github.com/rwegrzyniak/redis_locker. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/rwegrzyniak/redis_locker/blob/master/CODE_OF_CONDUCT.md).
 
 ## License
 
@@ -140,4 +142,4 @@ The gem is available as open source under the terms of the [MIT License](https:/
 
 ## Code of Conduct
 
-Everyone interacting in the RedisLocker project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/[USERNAME]/redis_locker/blob/master/CODE_OF_CONDUCT.md).
+Everyone interacting in the RedisLocker project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/rwegrzyniak/redis_locker/blob/master/CODE_OF_CONDUCT.md).
