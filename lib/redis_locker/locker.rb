@@ -23,6 +23,10 @@ module RedisLocker
       raise NotImplementedError, '#locked? has to be implemented'
     end
 
+    def unlock
+      raise NotImplementedError, '#unlock has to be implemented'
+    end
+
     def with_redis_lock(strategy: RedisLocker::DEFAULT_STRATEGY, retry_count: RedisLocker::DEFAULT_RETRY_COUNT,
                         retry_interval: RedisLocker::DEFAULT_RETRY_INTERVAL, &block)
       raise Errors::UnknownStrategy unless RedisLocker::STRATEGIES.include? strategy

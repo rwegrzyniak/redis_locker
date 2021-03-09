@@ -8,7 +8,7 @@ module RedisLocker
   DEFAULT_RETRY_INTERVAL = 1
   MODEL_LOCK_STRING = "model_lock"
   DEFAULT_STRATEGY = :exception
-  DEFAULT_EXCLUDED_METHODS = %i[id initialize]
+  DEFAULT_EXCLUDED_METHODS = %i[id initialize].freeze
   class << self
     def configuration
       @configuration ||= Configuration.new
@@ -83,6 +83,11 @@ module RedisLocker
 
     def unlock
       @model_locker.unlock
+    end
+
+    def with_redis_lock(strategy: RedisLocker::DEFAULT_STRATEGY, retry_count: RedisLocker::DEFAULT_RETRY_COUNT,
+                        retry_interval: RedisLocker::DEFAULT_RETRY_INTERVAL, &block)
+      @model_locker.with_redis_lock(strategy: strategy, retry_count: retry_count, retry_interval: retry_interval, &block)
     end
   end
 
