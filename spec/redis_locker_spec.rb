@@ -109,7 +109,7 @@ RSpec.describe RedisLocker do
       end
 
       it "raise_error when method is locked" do # @TODO rewrite to test that wont depend on implementation
-        object_locker = test_object.instance_variable_get('@model_locker')
+        object_locker = test_object.send(:model_locker)
         another_method_locker_instance = RedisLocker::MethodLocker.new(object_locker, :test)
         another_method_locker_instance.lock
         expect{test_object.test}.to raise_error(RedisLocker::Errors::Locked)
@@ -149,7 +149,6 @@ RSpec.describe RedisLocker do
     end
     class TestedLowLevelClass
       include RedisLocker
-      attr_reader :model_locker
       def id
         10
       end
@@ -160,7 +159,7 @@ RSpec.describe RedisLocker do
         test_object.lock
       end
       it "locks object" do
-        expect(test_object.model_locker.locked?).to be true
+        expect(test_object.send(:model_locker).locked?).to be true
       end
     end
     describe "#lock!" do
@@ -168,7 +167,7 @@ RSpec.describe RedisLocker do
         test_object.lock!
       end
       it "locks object" do
-        expect(test_object.model_locker.locked?).to be true
+        expect(test_object.send(:model_locker).locked?).to be true
       end
     end
     describe "#locked?" do
@@ -178,8 +177,8 @@ RSpec.describe RedisLocker do
       after do
         test_object.unlock
       end
-      it "locks object" do
-        expect(test_object.model_locker.locked?).to be true
+      it "retrurns true if object lockd" do
+        expect(test_object.send(:model_locker).locked?).to be true
       end
     end
 
@@ -246,7 +245,7 @@ RSpec.describe RedisLocker do
       end
 
       it "raise_error when method is locked" do # @TODO rewrite to test that wont depend on implementation
-        object_locker = test_object.instance_variable_get('@model_locker')
+        object_locker = test_object.send(:model_locker)
         another_method_locker_instance = RedisLocker::MethodLocker.new(object_locker, :test)
         another_method_locker_instance.lock
         expect{test_object.test}.to raise_error(RedisLocker::Errors::Locked)
