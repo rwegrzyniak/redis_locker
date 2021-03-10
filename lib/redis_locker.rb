@@ -29,14 +29,6 @@ module RedisLocker
     base_klass.extend(ClassMethods)
     base_klass.include(InstanceMethods)
     interceptor = base_klass.const_set("#{base_klass.name.split('::').last}Interceptor", Module.new)
-    puts interceptor
-    interceptor.class_eval do
-      def initialize(*args, **opts, &block)
-        @model_locker = RedisLocker::ModelLocker.new(self)
-        @method_lockers = {}
-        super
-      end
-    end
     base_klass.prepend interceptor
   end
 
@@ -71,24 +63,34 @@ module RedisLocker
 
   module InstanceMethods
     def method_locker(method)
-      @method_lockers[method] ||= RedisLocker::MethodLocker.new(@model_locker, method)
+      method_lockers[method] ||= RedisLocker::MethodLocker.new(model_locker, method)
     end
 
     def lock
-      @model_locker.lock
+      model_locker.lock
     end
 
     def lock!
-      @model_locker.lock!
+      model_locker.lock!
     end
 
     def unlock
-      @model_locker.unlock
+      model_locker.unlock
     end
 
     def with_redis_lock(strategy: RedisLocker::DEFAULT_STRATEGY, retry_count: RedisLocker::DEFAULT_RETRY_COUNT,
                         retry_interval: RedisLocker::DEFAULT_RETRY_INTERVAL, &block)
-      @model_locker.with_redis_lock(strategy: strategy, retry_count: retry_count, retry_interval: retry_interval, &block)
+      model_locker.with_redis_lock(strategy: strategy, retry_count: retry_count, retry_interval: retry_interval, &block)
+    end
+
+    private
+
+    def method_lockers
+      @method_lockers ||= {}
+    end
+
+    def model_locker
+      @model_locker ||= RedisLocker::ModelLocker.new(self)
     end
   end
 
