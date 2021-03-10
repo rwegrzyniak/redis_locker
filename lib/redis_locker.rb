@@ -32,9 +32,9 @@ module RedisLocker
     puts interceptor
     interceptor.class_eval do
       def initialize(*args, **opts, &block)
-        super
         @model_locker = RedisLocker::ModelLocker.new(self)
         @method_lockers = {}
+        super
       end
     end
     base_klass.prepend interceptor
