@@ -99,7 +99,7 @@ end
 above snippet after `some_method` was called tries to execute `some_method`, when lock occurs it will try two times with 1 second interval. If lock will be still present then it will raise `RedisLocker::Errors::Locked`\
 Silently die ( `strategy: :silently_die` ) strategy returns false if lock occurs
 #### Low level api
-RedisLocker provides also low level api which allows to manualy locking and unlocking models, which can be helpful sometimes but shouldn't be used with good reason
+RedisLocker provides also low level api which allows to manualy locking and unlocking models, which can be helpful sometimes but shouldn't be used without good reason
 ##### lock
 `lock` method locks model and returns `true` if model was locked successfuly or `false` if model is already locked
 ##### lock!
