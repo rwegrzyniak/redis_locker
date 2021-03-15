@@ -119,6 +119,7 @@ some_model.with_redis_lock strategy: :exception do
   #sth
 end
 ```
+It will raise `RedisLocker::Errors::Locked`
 ### releasing all locks
 When you or someone else messed up with locks which are still present in redis you can use `RedisLocker.release_locks!` which removes all locks in redis.
 It will raise exception because `some_model` is locked. But you will be able to call some locked method because there is no lock on any specific method.
