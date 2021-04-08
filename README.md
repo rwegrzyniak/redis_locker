@@ -71,7 +71,7 @@ It effectively does same thing as adding `lock_method` for every method in Model
 ```ruby
 class Model
   include RedisLocker
-  lock_every method_call except: [:id, :initialize, :not_locked_method]
+  lock_every_method_call except: [:id, :initialize, :not_locked_method]
   def id
     10
   end
